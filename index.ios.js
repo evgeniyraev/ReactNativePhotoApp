@@ -9,26 +9,40 @@ import {
   AppRegistry,
   StyleSheet,
   Text,
-  View
+  View,
+  Image,
+  Button,
+  Alert
 } from 'react-native';
+import Camera from 'react-native-camera';
 
 export default class PhotoAppProject extends Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
-      </View>
-    );
-  }
+
+
+	onButtonPress()
+	{
+		Alert.alert('Button has been pressed!');
+	}
+
+	  render()
+	  {
+		return (
+			<View style={styles.container}>
+				<Camera
+					ref = {(cam) => {
+						this.camera = cam;
+					}}
+					style={styles.preview}
+					aspect={Camera.constants.Aspect.fill}
+				>
+					<Button
+						onPress={this.onButtonPress}
+						title="Test"
+						color="#FF9900"/>
+				</Camera>
+			</View>
+		);
+	  }
 }
 
 const styles = StyleSheet.create({
@@ -48,6 +62,11 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
+   preview: {
+	flex: 1,
+	justifyContent: 'flex-end',
+	alignItems: 'center'
+	},
 });
 
 AppRegistry.registerComponent('PhotoAppProject', () => PhotoAppProject);

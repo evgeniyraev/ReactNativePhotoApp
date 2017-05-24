@@ -52,5 +52,9 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>pls let me use your camera</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>i want to see your pictures</string>
 </dict>
 </plist>
