@@ -15,13 +15,36 @@ import {
   Alert
 } from 'react-native';
 import Camera from 'react-native-camera';
+import Model from './Model';
 
-export default class PhotoAppProject extends Component {
+export default class PhotoAppProject extends Component
+{
+
+	consructor()
+	{
+		Model.on('pictures', this.onPictureChanged);
+	}
+
+	onPictureChanged()
+	{
+		this.forseReload();
+	}
 
 
 	onButtonPress()
 	{
-		Alert.alert('Button has been pressed!');
+		if(this.camera == null)
+		{
+			Alert.alert('camera is null');
+		}
+		else
+		{
+			this.camera.capture()
+			  .then((data) => {
+				  Model.addPicture(data);
+			})
+			.catch(err => console.error(err));
+		}
 	}
 
 	  render()
@@ -37,8 +60,8 @@ export default class PhotoAppProject extends Component {
 				>
 					<Button
 						onPress={this.onButtonPress}
-						title="Test"
-						color="#FF9900"/>
+						title="Snap"
+						color="#0099FF"/>
 				</Camera>
 			</View>
 		);
