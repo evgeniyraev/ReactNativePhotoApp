@@ -20,17 +20,27 @@ class Model  extends EventEmitter {
 
     getProperty(name)
     {
-        return(this.data[name]);
+        return this.data[name];
     }
 
 	get pictures()
 	{
-		this.getProperty('pictures');
+		return this.getProperty('pictures');
 	}
 
 	set pictures(value)
 	{
 		this.setProperty('pictures', value);
+	}
+	
+	get selectedPicture()
+	{
+		return this.getProperty('selectedPicture');
+	}
+
+	set selectedPicture(value)
+	{
+		this.setProperty('selectedPicture', value);
 	}
 
 	addPicture(picture)

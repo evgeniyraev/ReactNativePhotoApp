@@ -12,22 +12,32 @@ import {
   View,
   Image,
   Button,
-  Alert
+  Alert,
+  TouchableHighlight,
+  Dimensions
 } from 'react-native';
 import Camera from 'react-native-camera';
 import Model from './Model';
+import PictureList from './PictureList';
 
 export default class PhotoAppProject extends Component
 {
-
-	consructor()
+	constructor(props)
 	{
-		Model.on('pictures', this.onPictureChanged);
+		super(props);
+
+		this.state = {
+			selectedPicture:Model.selectedPicture
+		}
+
+		Model.addListener('selectedPicture', this.onPictureSelected.bind(this));
 	}
 
-	onPictureChanged()
+	onPictureSelected()
 	{
-		this.forseReload();
+		this.setState({
+			selectedPicture:Model.selectedPicture
+		});
 	}
 
 
@@ -47,31 +57,63 @@ export default class PhotoAppProject extends Component
 		}
 	}
 
+	onImagePress()
+	{
+		Model.selectedPicture = null;
+	}
+
 	  render()
 	  {
-		return (
-			<View style={styles.container}>
-				<Camera
-					ref = {(cam) => {
-						this.camera = cam;
-					}}
-					style={styles.preview}
-					aspect={Camera.constants.Aspect.fill}
-				>
-					<Button
-						onPress={this.onButtonPress}
-						title="Snap"
-						color="#0099FF"/>
-				</Camera>
-			</View>
-		);
+		  if(this.state.selectedPicture == null)
+		  {
+				return (
+				<View style={styles.container}>
+					<Camera
+						ref={(cam) => {
+							this.camera = cam;
+						}}
+						style={styles.preview}
+						aspect={Camera.constants.Aspect.fill}
+						captureTarget={Camera.constants.CaptureTarget.disk}
+					>
+						<Button
+							onPress={this.onButtonPress.bind(this)}
+							title="Snap"
+							color="#0099FF"/>
+					</Camera>
+					<PictureList/>
+				</View>
+				);
+		  }
+		  else
+		  {
+			  return (
+				<View style={styles.modalContaienr}>
+					<TouchableHighlight
+						onPress={() => this.onImagePress()}
+						>
+						<Image
+							source={{ uri: this.state.selectedPicture.path }}
+							style={styles.preview}
+						/>
+					</TouchableHighlight>
+				</View>
+			  )
+		  }
+
 	  }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-	 flexDirection: 'row',
+	 flexDirection: 'column',
+  },
+  modalContaienr:{
+		flex: 1,
+		alignItems: 'center',
+		justifyContent: 'center',
+		backgroundColor: '#000',
   },
   welcome: {
     fontSize: 20,
@@ -84,10 +126,15 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
    preview: {
-	flex: 1,
-	justifyContent: 'flex-end',
-	alignItems: 'center'
+		flex: 1,
+		justifyContent: 'flex-end',
+		alignItems: 'center',
+		height: Dimensions.get('window').height,
+		width: Dimensions.get('window').width
 	},
+	pictures: {
+		flex:1
+	}
 });
 
 AppRegistry.registerComponent('PhotoAppProject', () => PhotoAppProject);

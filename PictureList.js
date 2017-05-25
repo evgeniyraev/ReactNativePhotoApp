@@ -10,25 +10,66 @@ import {
   Text,
   View,
   Image,
+  ListView,
+  TouchableHighlight,
 } from 'react-native';
+import Model from './Model';
 
 export default class PictureList extends Component
 {
-	  render()
-	  {
+	constructor()
+	{
+		super();
+		this.onPictureChanged = this.onPictureChanged.bind(this);
+		Model.addListener('pictures', this.onPictureChanged);
+		console.log("test");
+		this.ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+		this.state = {
+			 dataSource: this.ds.cloneWithRows(Model.pictures),
+			};
+	}
+	componentWillUnmount()
+	{
+		Model.removeListener('pictures', this.onPictureChanged);
+	}
+
+	onPictureChanged()
+	{
+		this.setState({
+			dataSource: this.ds.cloneWithRows(Model.pictures),
+		});
+	}
+
+	onImagePress(picture)
+	{
+		Model.selectedPicture = picture;
+	}
+
+	render()
+	{
 		return (
-			<View style={styles.container}>
-				<Text>
-					pictures
-				</Text>
-			</View>
+			<ListView
+				contentContainerStyle={styles.list}
+			 	dataSource={this.state.dataSource}
+				enableEmptySections={true}
+				renderRow={(rowData) =>
+					<TouchableHighlight
+						onPress={() => this.onImagePress(rowData)}
+						>
+						<Image
+							source={{ uri: rowData.path }}
+							style={{width: 150, height: 150}}
+						/>
+					</TouchableHighlight>
+				}
+			/>
 		);
-	  }
+	}
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-	 flexDirection: 'row',
-  },
+	list: {
+		flexDirection: 'row',
+		flexWrap: 'wrap'
+	},
 });
